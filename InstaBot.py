@@ -48,7 +48,7 @@ class InstagramBot:
         driver = self.driver
         print('-------redirect to friend profile-------')
         driver.get(self.base_url + account)
-        wait.until(ec.visibility_of_element_located((By.CLASS_NAME,'g47SY ')))
+        wait.until(ec.visibility_of_element_located((By.CLASS_NAME, 'g47SY ')))
         spans = driver.find_elements_by_class_name("g47SY ")
         user_details = {
             'number_of_posts': spans[0].text,
@@ -59,3 +59,35 @@ class InstagramBot:
         self.posts = int(spans[0].text)
         driver.close()
 
+    def like_photos_of_friend(self, friend):
+        wait = self.wait
+        driver = self.driver
+        print('-------redirect to friend profile-------')
+        driver.get(self.base_url + friend)
+
+        time.sleep(2)
+        try:
+            driver.find_element_by_class_name("rkEop")
+        except NoSuchElementException:
+            pass
+
+        wait.until(ec.visibility_of_all_elements_located((By.CLASS_NAME, "v1Nh3")))
+        img_divs = driver.find_elements_by_class_name('v1Nh3')
+        img_divs[0].find_element_by_tag_name('a').click()
+        count = 0
+        while True:
+            like_button = wait.until(ec.visibility_of_element_located((By.CLASS_NAME, "fr66n")))
+            aria_label = like_button.find_element_by_css_selector('svg').get_attribute("aria-label")
+            if aria_label == 'Unlike':
+                count = count + 1
+                like_button.click()
+            time.sleep(1)
+            try:
+                next_btn = driver.find_element_by_class_name('coreSpriteRightPaginationArrow')
+                next_btn.click()
+            except NoSuchElementException:
+                print("next not found")
+                break
+        print("You liked " + str(count) + " posts of" + friend)
+        driver.find_element_by_xpath('/html/body/div[6]/div[3]/button').click()
+        driver.close()
