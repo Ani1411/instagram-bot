@@ -1,0 +1,12 @@
+.idea
+/.idea
+cred.json
+/cred.json
+passwordGenerator.py
+/passwordGenerator.py
+
+venv
+/venv
+
+chromedriver
+chromedriver_mac64.zip
